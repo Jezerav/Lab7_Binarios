@@ -124,10 +124,19 @@ public class ReproductorGUI extends JFrame {
 
         btnPlay.addActionListener(e -> {
             if (cancionCargada != null) {
-                logica.reproducir(cancionCargada.getRutaAudio());
-                iniciarSincronizacion(cancionCargada.getRutaAudio(),false);
-            } else {
-                JOptionPane.showMessageDialog(this, "Primero usa SELECT en una canción.");
+               
+                if (estaEnPausa) {
+                    logica.reproducir(cancionCargada.getRutaAudio());
+                    
+                    iniciarSincronizacion(cancionCargada.getRutaAudio(), true); 
+                    estaEnPausa = false;
+                } else {
+                 
+                    logica.reproducir(cancionCargada.getRutaAudio());
+                
+                    iniciarSincronizacion(cancionCargada.getRutaAudio(), false);
+                }
+
             }
         });
 
