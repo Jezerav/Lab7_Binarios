@@ -4,17 +4,16 @@
  */
 package lab7_binarios;
 
+import javax.swing.SwingUtilities;
+
 /**
  *
  * @author jerem
  */
 public class Main {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new ReproductorGUI().setVisible(true));
     }
     
 }
