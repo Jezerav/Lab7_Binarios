@@ -167,10 +167,31 @@ public class ReproductorGUI extends JFrame {
         });
 
         btnRemove.addActionListener(e -> {
-            int i = listaVisual.getSelectedIndex();
-            if (i != -1) {
-                modeloLista.remove(i);
+            int index = listaVisual.getSelectedIndex();
+
+            if (index != -1) {
+                DatosCancion cancionAEliminar = modeloLista.getElementAt(index);
+
+                if (cancionCargada != null && cancionCargada.equals(cancionAEliminar)) {
+                    logica.detener();
+                    if (contadorTiempo != null) contadorTiempo.stop();
+
+                    // Limpiar la interfaz del reproductor
+                    lblPortadaGrande.setIcon(null); 
+                    lblPortadaGrande.setText("Seleccione una canción");
+                    lblTituloActual.setText("Canción eliminada");
+                    barraProgreso.setValue(0);
+                    lblCronometro.setText("00:00");
+
+                    cancionCargada = null; 
+                    estaEnPausa = false;
+                }
+
+                modeloLista.remove(index);
                 actualizarBinario();
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Por favor, selecciona una canción para eliminar.");
             }
         });
     }
@@ -193,7 +214,7 @@ public class ReproductorGUI extends JFrame {
 
         final String[] paths = {"", ""}; // 0: img, 1: aud
 
-        JButton bImg = new JButton("Cargar Foto");
+        JButton bImg = new JButton("Cargar JPG/PNG");
         bImg.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
             javax.swing.filechooser.FileNameExtensionFilter filtroImagen = 
