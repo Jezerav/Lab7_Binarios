@@ -18,6 +18,7 @@ public class ReproductorGUI extends JFrame {
     private JLabel lblTituloActual;
     private JProgressBar barraProgreso;
     private JLabel lblCronometro;
+    private boolean estaEnPausa = false;
     
     private Logica logica;
     private javax.swing.Timer contadorTiempo;
@@ -113,15 +114,26 @@ public class ReproductorGUI extends JFrame {
         btnPlay.addActionListener(e -> {
             if (cancionCargada != null) {
                 logica.reproducir(cancionCargada.getRutaAudio());
-                iniciarSincronizacion(cancionCargada.getRutaAudio());
+                iniciarSincronizacion(cancionCargada.getRutaAudio(),false);
             } else {
                 JOptionPane.showMessageDialog(this, "Primero usa SELECT en una canción.");
             }
         });
 
         btnPause.addActionListener(e -> {
-            logica.pausar();
-            if(contadorTiempo != null) contadorTiempo.stop();
+            if (cancionCargada == null) return; 
+
+            if (!estaEnPausa) {
+                logica.pausar();
+                if (contadorTiempo != null) contadorTiempo.stop();
+                btnPause.setText("II");
+                estaEnPausa = true;
+            } else {
+                logica.reproducir(cancionCargada.getRutaAudio());
+                iniciarSincronizacion(cancionCargada.getRutaAudio(), true); 
+                btnPause.setText("II"); 
+                estaEnPausa = false;
+            }
         });
 
        btnStop.addActionListener(e -> {
@@ -274,31 +286,27 @@ public class ReproductorGUI extends JFrame {
         }
     }
     
-    private void iniciarSincronizacion(String ruta) {
-     
-        if (contadorTiempo != null && contadorTiempo.isRunning()) {
-            contadorTiempo.stop();
+    private void iniciarSincronizacion(String ruta, boolean esContinuacion) {
+        if (contadorTiempo != null && contadorTiempo.isRunning()) contadorTiempo.stop();
+
+        // Si NO es continuación (como en el PLAY normal), reseteamos los segundos
+        if (!esContinuacion) {
+            segundosTranscurridos = 0;
+            barraProgreso.setValue(0);
+            lblCronometro.setText("00:00");
         }
-        segundosTranscurridos = 0; 
 
         int duracionTotal = logica.obtenerDuracionSegundos(ruta);
         barraProgreso.setMaximum(duracionTotal);
-        barraProgreso.setValue(0);
-        lblCronometro.setText("00:00");
 
         contadorTiempo = new javax.swing.Timer(1000, e -> {
             segundosTranscurridos++;
             barraProgreso.setValue(segundosTranscurridos);
-
             int min = segundosTranscurridos / 60;
             int seg = segundosTranscurridos % 60;
             lblCronometro.setText(String.format("%02d:%02d", min, seg));
-
-            if (segundosTranscurridos >= duracionTotal) {
-                contadorTiempo.stop();
-            }
+            if (segundosTranscurridos >= duracionTotal) contadorTiempo.stop();
         });
-
         contadorTiempo.start();
     }
 
