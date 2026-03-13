@@ -32,7 +32,7 @@ public class ReproductorGUI extends JFrame {
 
     public ReproductorGUI() {
         logica = new Logica();
-        setTitle("Jeretify");
+        setTitle("JERETIFY");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -53,6 +53,9 @@ public class ReproductorGUI extends JFrame {
         lblTituloActual.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblTituloActual.setForeground(Color.WHITE);
         lblTituloActual.setFont(new Font("SansSerif", Font.BOLD, 16));
+        lblTituloActual = new JLabel("", SwingConstants.CENTER);
+        lblTituloActual.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblTituloActual.setForeground(Color.WHITE);
 
         JPanel panelControlesAudio = new JPanel(new FlowLayout());
         panelControlesAudio.setBackground(colorFondo);
@@ -102,12 +105,20 @@ public class ReproductorGUI extends JFrame {
             cancionCargada = listaVisual.getSelectedValue();
             if (cancionCargada != null) {
                 mostrarImagen(cancionCargada.getRutaImagen(), lblPortadaGrande, 300);
-                lblTituloActual.setText(cancionCargada.getNombre());
-                // Reiniciar visuales
+
+                lblTituloActual.setText("<html><div style='text-align: center;'>" +
+                    "<b style='font-size: 16px;'>" + cancionCargada.getNombre() + "</b><br>" +
+                    "<span style='color: #CCCCCC;'>" + cancionCargada.getArtista() + "</span><br>" +
+                    "<i style='color: #FF6600;'>" + cancionCargada.getGenero() + " • " + cancionCargada.getDuracion() + "</i>" +
+                    "</div></html>");
+
+                // Reiniciar visuales del tiempo
+                if (contadorTiempo != null) contadorTiempo.stop();
+                segundosTranscurridos = 0;
                 barraProgreso.setValue(0);
                 lblCronometro.setText("00:00");
+
                 logica.detener();
-                if(contadorTiempo != null) contadorTiempo.stop();
             }
         });
 
